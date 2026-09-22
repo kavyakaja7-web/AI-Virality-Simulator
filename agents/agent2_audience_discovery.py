@@ -143,7 +143,7 @@ class Agent2AudienceDiscovery:
 
     def _infer_topics(self, combined_text: str, visual_analysis: Dict[str, Any]) -> List[str]:
         """
-        Identify topic clusters based on keywords and visual tags.
+        Identify topic clusters based on keywords and visual analysis tags.
         """
         topic_keywords = {
             "Technology & Computer Science": [
@@ -154,43 +154,134 @@ class Agent2AudienceDiscovery:
                 "college", "university", "student", "study", "exam", "class", "lecture", 
                 "campus", "school", "assignment", "course"
             ],
+            "Fitness & Health": [
+                "workout", "gym", "fitness", "diet", "healthy", "exercise", "muscle", 
+                "weightlifting", "squat", "training", "bodybuilding", "crossfit", "cardio"
+            ],
             "Travel & Exploration": [
                 "travel", "budget", "trip", "tour", "explore", "vacation", "flight", 
                 "hotel", "backpack", "destination", "road"
             ],
+            "Food & Culinary": [
+                "cooking", "recipe", "food", "chef", "kitchen", "baking", "dish", 
+                "meal", "restaurant", "street food", "delicious"
+            ],
             "Business & Career": [
                 "startup", "job", "career", "money", "finance", "business", "office", 
                 "work", "productivity", "interview"
-            ],
-            "Fitness & Health": [
-                "workout", "gym", "fitness", "diet", "healthy", "exercise", "muscle"
             ],
             "Entertainment & Pop Culture": [
                 "viral", "challenge", "funny", "meme", "comedy", "movie", "music", "song"
             ]
         }
 
+        # Extract visual signals from Agent 1 (Gemini Vision)
+        visual_topic = str(visual_analysis.get("topic", ""))
+        visual_category = str(visual_analysis.get("category", ""))
+        visual_scene = str(visual_analysis.get("scene", ""))
+        visual_activities = " ".join(visual_analysis.get("activities", []) if isinstance(visual_analysis.get("activities"), list) else [])
+        visual_objects = " ".join(visual_analysis.get("objects", []) if isinstance(visual_analysis.get("objects"), list) else [])
+        visual_summary = str(visual_analysis.get("summary", ""))
+
+        # Combine text and visual cues
+        all_signals = f"{combined_text} {visual_topic} {visual_category} {visual_scene} {visual_activities} {visual_objects} {visual_summary}".lower()
+
         scored_topics = []
         for topic, keywords in topic_keywords.items():
-            matches = sum(1 for kw in keywords if re.search(r'\b' + re.escape(kw) + r'\b', combined_text))
+            matches = sum(1 for kw in keywords if re.search(r'\b' + re.escape(kw) + r'\b', all_signals))
             if matches > 0:
                 scored_topics.append((topic, matches))
 
         scored_topics.sort(key=lambda x: x[1], reverse=True)
 
-        if scored_topics:
-            return [t[0] for t in scored_topics[:3]]
+        # If Gemini Vision identified a specific valid topic, ensure it is the primary niche
+        discovered_topics = []
+        if visual_topic and "pending" not in visual_topic.lower() and "unknown" not in visual_topic.lower():
+            discovered_topics.append(visual_topic)
+
+        for t in scored_topics:
+            if t[0] not in discovered_topics:
+                discovered_topics.append(t[0])
+
+        if discovered_topics:
+            return discovered_topics[:3]
         
-        # Default topic if text is sparse (e.g. lifestyle or visual)
+        # Default topic if text and visuals are sparse/empty
         return ["Student & Campus Lifestyle", "Technology & Workplace Culture"]
 
     def _generate_segments(self, topics: List[str], orientation: str, duration: float, text: str) -> List[Dict[str, Any]]:
         """
         Generate distinct audience personas tailored to the inferred topics.
         """
-        primary_topic = topics[0] if topics else ""
+        primary_topic = (topics[0] if topics else "").lower()
 
-        if "Technology" in primary_topic or "Computer" in primary_topic or "Education" in primary_topic:
+        if any(w in primary_topic for w in ["fitness", "gym", "workout", "weightlifting", "health", "exercise"]):
+            return [
+                {
+                    "segment_id": 1,
+                    "name": "Gym & Strength Training Enthusiasts",
+                    "age_range": "18–28",
+                    "persona": "Active fitness lovers, gym-goers, and bodybuilding enthusiasts",
+                    "interests": ["Gym Form & Tips", "Workout Motivation", "PR Celebrations", "Fitness Memes"],
+                    "motivations": "Seeking exercise motivation, technique improvement, and relatable gym culture",
+                    "consumption_habits": "Saves workout clips to workout folders and shares PR clips with gym partners",
+                    "relevance_score": 0.95
+                },
+                {
+                    "segment_id": 2,
+                    "name": "Health & Lifestyle Starters",
+                    "age_range": "22–35",
+                    "persona": "Individuals looking to build healthy daily workout and wellness habits",
+                    "interests": ["Beginner Workouts", "Healthy Living", "Quick Routines", "Wellness"],
+                    "motivations": "Inspiration for fitness routines that fit into busy everyday schedules",
+                    "consumption_habits": "High watch-time and replay on quick, high-energy demonstrations",
+                    "relevance_score": 0.88
+                },
+                {
+                    "segment_id": 3,
+                    "name": "Short-Form Fitness & Athletic Content Consumers",
+                    "age_range": "16–30",
+                    "persona": "General social media viewers who follow trending fitness creators",
+                    "interests": ["Trending Fitness Audio", "Transformation Reels", "Athletic Challenges"],
+                    "motivations": "Fast-paced visual entertainment and aesthetic lifestyle content",
+                    "consumption_habits": "High engagement on algorithmic discovery pages (Instagram Explore / TikTok FYP)",
+                    "relevance_score": 0.79
+                }
+            ]
+        elif any(w in primary_topic for w in ["food", "cook", "recipe", "culinary", "kitchen"]):
+            return [
+                {
+                    "segment_id": 1,
+                    "name": "Quick Recipe & Food Enthusiasts",
+                    "age_range": "18–30",
+                    "persona": "Home cooks, students, and food lovers seeking easy meal ideas",
+                    "interests": ["15-Minute Meals", "Street Food", "Comfort Food Hacks", "Visual Food ASMR"],
+                    "motivations": "Discovering easy, mouthwatering meals they can recreate at home",
+                    "consumption_habits": "High save-to-collection rates and recipe link shares in group chats",
+                    "relevance_score": 0.94
+                },
+                {
+                    "segment_id": 2,
+                    "name": "Foodie & Cafe Explorers",
+                    "age_range": "20–35",
+                    "persona": "Urban diners and weekend food explorers",
+                    "interests": ["Trending Eateries", "Aesthetic Food Plating", "Culinary Experiences"],
+                    "motivations": "Visual satisfaction and finding new culinary trends",
+                    "consumption_habits": "Tags friends with 'we have to make/try this'",
+                    "relevance_score": 0.87
+                },
+                {
+                    "segment_id": 3,
+                    "name": "Casual Scrolling Food Consumers",
+                    "age_range": "16–45",
+                    "persona": "General audiences browsing food reels for relaxation",
+                    "interests": ["Satisfying Food Videos", "Viral Cooking Challenges"],
+                    "motivations": "Visual craving and relaxing short-form entertainment",
+                    "consumption_habits": "High completion rate if video has fast, satisfying cuts",
+                    "relevance_score": 0.78
+                }
+            ]
+        elif any(w in primary_topic for w in ["technology", "computer", "coding", "software", "tech", "developer"]):
             return [
                 {
                     "segment_id": 1,
@@ -238,7 +329,7 @@ class Agent2AudienceDiscovery:
                     "relevance_score": 0.77
                 }
             ]
-        elif "Travel" in primary_topic:
+        elif any(w in primary_topic for w in ["travel", "trip", "tour", "backpack", "vacation"]):
             return [
                 {
                     "segment_id": 1,

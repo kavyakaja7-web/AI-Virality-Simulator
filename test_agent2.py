@@ -52,6 +52,34 @@ def test_audience_discovery():
     assert len(tech_result["audience_segments"]) >= 3
     assert "College" in tech_result["audience_segments"][0]["name"] or "Student" in tech_result["audience_segments"][0]["name"]
 
+    # Case 3: Fitness / Gym Video (0 text detected, but Gemini Vision identified visual gym scene)
+    fitness_profile = {
+        "agent": {"id": "agent_1", "name": "Video Analysis Agent"},
+        "video_metadata": {
+            "orientation": "vertical",
+            "duration_seconds": 15.0,
+            "resolution": "1080x1920"
+        },
+        "text_analysis": {
+            "text_present": False,
+            "detected_text": []
+        },
+        "visual_analysis": {
+            "topic": "Weightlifting & Gym Workout",
+            "category": "Fitness & Health",
+            "scene": "Commercial gym with barbells",
+            "activities": ["lifting heavy barbell", "squatting"],
+            "objects": ["barbell", "weight plates", "chalk"],
+            "summary": "An athlete performs heavy barbell squats inside a gym."
+        }
+    }
+
+    fitness_result = agent2.discover(fitness_profile)
+    print("\n--- TEST CASE 3: FITNESS VIDEO (VISUAL ONLY, NO TEXT) ---")
+    print(json.dumps(fitness_result, indent=2))
+    assert len(fitness_result["audience_segments"]) >= 3
+    assert "Gym" in fitness_result["audience_segments"][0]["name"] or "Fitness" in fitness_result["audience_segments"][0]["name"]
+
     print("\n[SUCCESS] All Agent 2 tests passed successfully!")
 
 if __name__ == "__main__":
