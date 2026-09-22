@@ -1,20 +1,28 @@
 import easyocr
 
 
-# Create OCR reader
-reader = easyocr.Reader(["en"])
+# Lazy-loaded OCR reader
+reader = None
+
+
+def get_reader():
+    global reader
+    if reader is None:
+        print("   [EasyOCR] Initializing OCR model (downloading model weights if first time)...", flush=True)
+        reader = easyocr.Reader(["en"])
+    return reader
 
 
 def extract_text_from_frames(frame_paths):
     """
     Detect text appearing inside video frames.
     """
-
+    ocr_reader = get_reader()
     detected_text = []
 
     for frame_path in frame_paths:
 
-        results = reader.readtext(frame_path)
+        results = ocr_reader.readtext(frame_path)
 
         for result in results:
 
