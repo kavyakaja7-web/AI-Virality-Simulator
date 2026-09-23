@@ -3,6 +3,7 @@ import json
 
 from agents.agent1_video_analyzer import Agent1VideoAnalyzer
 from agents.agent2_audience_discovery import Agent2AudienceDiscovery
+from agents.agent3_population_generator import Agent3PopulationGenerator
 
 
 # -------------------------------------------------------
@@ -62,7 +63,25 @@ print(json.dumps(audience_profile, indent=4))
 print("\n[✓ Saved to outputs/audience_profile.json]")
 
 
+# -------------------------------------------------------
+# AGENT 3: VIRTUAL POPULATION GENERATOR
+# -------------------------------------------------------
+
+agent3 = Agent3PopulationGenerator(population_size=1000)
+population_profile = agent3.generate(audience_profile)
+
+print()
+print("=" * 60)
+print("👥 AGENT 3 OUTPUT — VIRTUAL POPULATION SUMMARY")
+print("=" * 60)
+print(f"Generated {population_profile['population_size']} virtual users across {len(audience_profile['audience_segments'])} segments.")
+print("Sample Virtual User:")
+if population_profile.get("users"):
+    print(json.dumps(population_profile["users"][0], indent=4))
+print("\n[✓ Saved to outputs/virtual_population.json]")
+
+
 print()
 print("=" * 60)
 print("🎉 AI VIRALITY SIMULATOR PIPELINE COMPLETED")
-print("=" * 60)
+print("=" * 60)

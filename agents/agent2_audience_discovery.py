@@ -329,6 +329,39 @@ class Agent2AudienceDiscovery:
                     "relevance_score": 0.77
                 }
             ]
+        elif any(w in primary_topic for w in ["student", "education", "bus", "transport", "campus", "college", "school"]):
+            return [
+                {
+                    "segment_id": 1,
+                    "name": "College & Daily Bus Commuters",
+                    "age_range": "18–24",
+                    "persona": "Students and daily commuters taking public or campus transit",
+                    "interests": ["Campus Transport Hacks", "Student Bus Passes", "Daily Commute Humor", "Student Life"],
+                    "motivations": "Finding practical transit tips, student perks, and relatable commute struggles",
+                    "consumption_habits": "High DM sharing in college WhatsApp/Telegram group chats during travel",
+                    "relevance_score": 0.94
+                },
+                {
+                    "segment_id": 2,
+                    "name": "Youth & Campus Life Enthusiasts",
+                    "age_range": "17–25",
+                    "persona": "Undergraduate students interested in regional college news and student welfare",
+                    "interests": ["College News", "State Student Schemes", "Campus Vlogs", "Youth Lifestyle"],
+                    "motivations": "Staying informed on regional student benefits, bus passes, and campus updates",
+                    "consumption_habits": "Engages heavily with comments, tagging college classmates",
+                    "relevance_score": 0.86
+                },
+                {
+                    "segment_id": 3,
+                    "name": "Local Public Transport Observers",
+                    "age_range": "20–35",
+                    "persona": "Local city residents following public infrastructure and civic updates",
+                    "interests": ["Public Bus Service Reviews", "Civic Updates", "Local Travel"],
+                    "motivations": "Curiosity about local transit quality, bus routes, and free transport schemes",
+                    "consumption_habits": "Passive watching and bookmarking for local travel reference",
+                    "relevance_score": 0.77
+                }
+            ]
         elif any(w in primary_topic for w in ["travel", "trip", "tour", "backpack", "vacation"]):
             return [
                 {
@@ -363,24 +396,25 @@ class Agent2AudienceDiscovery:
                 }
             ]
         else:
-            # Universal discovery segments
+            # Dynamic topic discovery fallback
+            topic_title = topics[0] if topics else "General Content"
             return [
                 {
                     "segment_id": 1,
-                    "name": "Core Lifestyle & Trend Followers",
+                    "name": f"Core {topic_title} Enthusiasts",
                     "age_range": "18–24",
-                    "persona": "Active daily short-form video consumers",
-                    "interests": ["Trending Audio", "Relatable Skits", "Social Trends"],
-                    "motivations": "Quick entertainment, staying updated on viral trends",
+                    "persona": f"Active short-form consumers interested in {topic_title}",
+                    "interests": [f"{topic_title} Trends", "Relatable Skits", "Social Trends"],
+                    "motivations": f"Quick entertainment and staying updated on {topic_title} content",
                     "consumption_habits": "High propensity to share directly into direct message group chats",
                     "relevance_score": 0.90
                 },
                 {
                     "segment_id": 2,
-                    "name": "Young Working Adults",
+                    "name": f"Young Adult {topic_title} Viewers",
                     "age_range": "25–34",
-                    "persona": "Professionals browsing content during breaks",
-                    "interests": ["Everyday Humor", "Lifestyle Content", "Real-Life Observations"],
+                    "persona": f"Professionals browsing {topic_title} content during breaks",
+                    "interests": [f"Everyday {topic_title}", "Lifestyle Content", "Real-Life Observations"],
                     "motivations": "Stress relief and casual observation of everyday scenarios",
                     "consumption_habits": "Watches without sound or with captions enabled",
                     "relevance_score": 0.82
