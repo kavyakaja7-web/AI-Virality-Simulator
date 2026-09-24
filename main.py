@@ -4,6 +4,7 @@ import json
 from agents.agent1_video_analyzer import Agent1VideoAnalyzer
 from agents.agent2_audience_discovery import Agent2AudienceDiscovery
 from agents.agent3_population_generator import Agent3PopulationGenerator
+from agents.agent4_engagement_predictor import Agent4EngagementPredictor
 
 
 # -------------------------------------------------------
@@ -81,7 +82,26 @@ if population_profile.get("users"):
 print("\n[✓ Saved to outputs/virtual_population.json]")
 
 
+# -------------------------------------------------------
+# AGENT 4: ENGAGEMENT & VIRALITY PREDICTOR
+# -------------------------------------------------------
+
+agent4 = Agent4EngagementPredictor()
+engagement_prediction = agent4.predict(
+    population_profile=population_profile,
+    content_profile=content_profile,
+    audience_profile=audience_profile
+)
+
 print()
 print("=" * 60)
-print("🎉 AI VIRALITY SIMULATOR PIPELINE COMPLETED")
-print("=" * 60)
+print("📊 AGENT 4 OUTPUT — VIRALITY & ENGAGEMENT PREDICTION")
+print("=" * 60)
+print(json.dumps(engagement_prediction, indent=4))
+print("\n[✓ Saved to outputs/engagement_prediction.json]")
+
+
+print()
+print("=" * 60)
+print("🎉 AI VIRALITY SIMULATOR PIPELINE COMPLETED (AGENTS 1–4)")
+print("=" * 60)
