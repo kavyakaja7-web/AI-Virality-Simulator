@@ -1,5 +1,6 @@
 import random
 from typing import Dict, List, Any
+from services.llm_service import call_llm_json
 
 
 def simulate_viewing_sessions(
@@ -293,9 +294,32 @@ def calculate_virality_score(
         push = "Restricted. High early drop-off signals the algorithm to keep distribution restricted to small testing pools."
         diagnosis = "Hook fails to retain viewers past 3 seconds. Pacing or visual clarity needs improvement."
 
+    # Try dynamic AI verdict reasoning
+    ai_prompt = f"""Given this short-form video's simulation performance:
+- Virality Score: {score}/100 ({rating})
+- Completion Rate: {completion_rate}%
+- Share Rate: {share_rate}%
+- 3s Hook Retention: {hook_rate}%
+- Top Performing Segment: {top_segment_name}
+
+Provide a realistic 1-sentence algorithmic distribution forecast and 1-sentence key diagnostic driver.
+Return JSON:
+{{
+  "algorithm_push_probability": "Projection of how recommendation feeds will test and scale this video.",
+  "key_strength": "Specific diagnostic explanation of what drove this outcome."
+}}"""
+    try:
+        ai_verdict = call_llm_json(ai_prompt, system_instruction="You are a social platform recommendation algorithm engineer. Return ONLY valid JSON.")
+        if ai_verdict and ai_verdict.get("algorithm_push_probability") and ai_verdict.get("key_strength"):
+            push = ai_verdict["algorithm_push_probability"]
+            diagnosis = ai_verdict["key_strength"]
+    except Exception:
+        pass
+
     return {
         "virality_score": score,
         "rating": rating,
         "algorithm_push_probability": push,
         "key_strength": diagnosis
     }
+

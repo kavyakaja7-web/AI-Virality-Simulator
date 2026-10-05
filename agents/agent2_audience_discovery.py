@@ -26,6 +26,7 @@ Key Principle:
 
 import re
 from typing import Dict, List, Any
+from services.llm_service import call_llm_json
 
 
 class Agent2AudienceDiscovery:
@@ -59,52 +60,52 @@ class Agent2AudienceDiscovery:
         metadata = content_profile.get("video_metadata", {})
         text_analysis = content_profile.get("text_analysis", {})
         visual_analysis = content_profile.get("visual_analysis", {})
+        audio_analysis = content_profile.get("audio_analysis", {})
 
-        # Extract OCR text tokens
+        # Extract OCR text tokens and spoken audio transcript
         detected_texts = [
             item.get("text", "") 
             for item in text_analysis.get("detected_text", []) 
             if isinstance(item, dict)
         ]
+
+        transcript = audio_analysis.get("transcript", "")
+        if transcript and transcript != "(No spoken words detected in video)":
+            detected_texts.append(transcript)
+
         combined_text = " ".join(detected_texts).lower()
 
         orientation = metadata.get("orientation", "unknown")
         duration = metadata.get("duration_seconds", 0)
 
-        print(f"✓ Signals processed: {len(detected_texts)} text cues, format: {orientation}, duration: {duration}s")
+        print(f"✓ Signals processed: {len(detected_texts)} text/audio cues, format: {orientation}, duration: {duration}s")
 
         # -------------------------------------------------
-        # STEP 2 — TOPIC & NICHE CLUSTERING
+        # STEP 2 — DYNAMIC AI AUDIENCE DISCOVERY
         # -------------------------------------------------
         print()
         print("[Agent 2 - Step 2]")
-        print("Inferring content topic and niche...")
+        print("Discovering audience with dynamic AI reasoning...")
 
-        topics = self._infer_topics(combined_text, visual_analysis)
-        primary_niche = topics[0] if topics else "General Lifestyle & Entertainment"
+        llm_audience = self._discover_with_llm(content_profile, combined_text, orientation, duration)
+
+        if llm_audience and llm_audience.get("audience_segments") and len(llm_audience["audience_segments"]) >= 2:
+            print("✓ Successfully generated dynamic audience personas via AI.")
+            primary_niche = llm_audience.get("primary_niche", visual_analysis.get("topic", "General Entertainment"))
+            topics = llm_audience.get("detected_topics", [primary_niche])
+            segments = llm_audience.get("audience_segments", [])
+            platform_fit = llm_audience.get("platform_distribution", self._determine_platform_fit(orientation, duration))
+            virality_vector = llm_audience.get("virality_vector", self._assess_virality_vector(segments, primary_niche))
+        else:
+            print("   (Using rule-based topic inference & audience segmentation fallback)")
+            topics = self._infer_topics(combined_text, visual_analysis)
+            primary_niche = topics[0] if topics else "General Lifestyle & Entertainment"
+            segments = self._generate_segments(topics, orientation, duration, combined_text)
+            platform_fit = self._determine_platform_fit(orientation, duration)
+            virality_vector = self._assess_virality_vector(segments, primary_niche)
 
         print(f"✓ Primary niche identified: {primary_niche}")
-        print(f"✓ Associated topics: {', '.join(topics)}")
-
-        # -------------------------------------------------
-        # STEP 3 — AUDIENCE SEGMENT GENERATION
-        # -------------------------------------------------
-        print()
-        print("[Agent 2 - Step 3]")
-        print("Generating target audience segments...")
-
-        segments = self._generate_segments(topics, orientation, duration, combined_text)
-
         print(f"✓ Discovered {len(segments)} distinct audience segments.")
-
-        # -------------------------------------------------
-        # STEP 4 — PLATFORM & REACH SYNTHESIS
-        # -------------------------------------------------
-        print()
-        print("[Agent 2 - Step 4]")
-        print("Synthesizing platform fit and reach potential...")
-
-        platform_fit = self._determine_platform_fit(orientation, duration)
 
         audience_profile = {
             "agent": {
@@ -125,7 +126,7 @@ class Agent2AudienceDiscovery:
             "overall_demographics": {
                 "primary_age_bracket": segments[0]["age_range"] if segments else "18–24",
                 "secondary_age_bracket": segments[1]["age_range"] if len(segments) > 1 else "25–34",
-                "virality_vector": self._assess_virality_vector(segments, primary_niche)
+                "virality_vector": virality_vector
             }
         }
 
@@ -458,3 +459,83 @@ class Agent2AudienceDiscovery:
             f"Content resonates strongly with '{primary_niche}' culture, "
             f"driving direct message (DM) forwarding and comment tagging."
         )
+
+    def _discover_with_llm(
+        self,
+        content_profile: Dict[str, Any],
+        combined_text: str,
+        orientation: str,
+        duration: float
+    ) -> Any:
+        visual = content_profile.get("visual_analysis", {})
+        audio = content_profile.get("audio_analysis", {})
+        hook = content_profile.get("hook_analysis", {})
+
+        topic = visual.get("topic", "General")
+        summary = visual.get("summary", "")
+        transcript = audio.get("transcript", "")
+        hook_type = hook.get("hook_type", "Visual")
+        hook_strength = hook.get("hook_strength", "Moderate")
+
+        prompt = f"""You are an elite short-form social media strategist (TikTok, Instagram Reels, YouTube Shorts).
+Analyze this video content profile and discover the target audience segments and platform distribution:
+
+Video Characteristics:
+- Duration: {duration}s
+- Format: {orientation}
+- Visual Topic: {topic}
+- Visual Category: {visual.get('category', 'Entertainment')}
+- Visual Scene: {visual.get('scene', 'General')}
+- Visual Summary: {summary}
+- Audio Transcript: {transcript}
+- 3-Second Hook: {hook_type} (Strength: {hook_strength})
+
+Return ONLY a valid JSON object matching this exact schema:
+{{
+  "primary_niche": "Highly specific niche title (e.g., Battle Royale Gaming Streams)",
+  "detected_topics": ["Specific Topic 1", "Specific Topic 2"],
+  "platform_distribution": [
+    {{"platform": "Instagram Reels", "suitability": "Optimal (95%)", "strength": "Specific reason why this video works on Reels"}},
+    {{"platform": "YouTube Shorts", "suitability": "Optimal (92%)", "strength": "Specific reason why this video works on Shorts"}},
+    {{"platform": "TikTok", "suitability": "Optimal (90%)", "strength": "Specific reason why this video works on TikTok"}}
+  ],
+  "audience_segments": [
+    {{
+      "segment_id": 1,
+      "name": "Specific core audience name tailored to this video",
+      "age_range": "18–24",
+      "persona": "Detailed persona description of why they love this specific content",
+      "interests": ["Specific Interest 1", "Specific Interest 2", "Specific Interest 3"],
+      "motivations": "Why they watch this video",
+      "consumption_habits": "How they share and watch",
+      "relevance_score": 0.92
+    }},
+    {{
+      "segment_id": 2,
+      "name": "Specific secondary audience name",
+      "age_range": "22–32",
+      "persona": "Detailed persona description",
+      "interests": ["Specific Interest 1", "Specific Interest 2", "Specific Interest 3"],
+      "motivations": "Why they watch",
+      "consumption_habits": "How they share and watch",
+      "relevance_score": 0.84
+    }},
+    {{
+      "segment_id": 3,
+      "name": "Broad exploratory audience name",
+      "age_range": "16–35",
+      "persona": "General social media algorithmic audience",
+      "interests": ["Viral Content", "Trending Clips"],
+      "motivations": "Passive entertainment",
+      "consumption_habits": "High drop-off risk if hook doesn't land",
+      "relevance_score": 0.75
+    }}
+  ],
+  "virality_vector": "One concise sentence explaining why this video has peer-to-peer shareability."
+}}
+"""
+        try:
+            return call_llm_json(prompt, system_instruction="You are an expert audience strategist for viral content. Return ONLY valid JSON.")
+        except Exception:
+            return None
+

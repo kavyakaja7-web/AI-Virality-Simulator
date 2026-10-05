@@ -113,7 +113,10 @@ def generate_virtual_population(
 
                 "age": age,
 
-                "location": "India",
+                "location": random.choices(
+                    ["United States", "India", "United Kingdom", "Canada", "Australia", "Germany", "Philippines"],
+                    weights=[0.35, 0.30, 0.12, 0.08, 0.07, 0.04, 0.04]
+                )[0],
 
                 "interests": interests,
 

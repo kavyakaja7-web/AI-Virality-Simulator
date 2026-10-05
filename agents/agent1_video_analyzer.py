@@ -140,11 +140,24 @@ class Agent1VideoAnalyzer:
         print("✓ Visual analysis completed.")
 
         # -------------------------------------------------
-        # STEP 6 — CREATE CONTENT PROFILE
+        # STEP 6 — HOOK & STRUCTURE ANALYSIS
         # -------------------------------------------------
 
         print()
         print("[Agent 1 - Step 6]")
+        print("Evaluating hook and narrative structure...")
+
+        hook_info = self._analyze_hook(text_results, audio_results, visual_results)
+        structure_info = self._analyze_structure(video_info, text_results, audio_results)
+
+        print("✓ Hook and structure evaluated.")
+
+        # -------------------------------------------------
+        # STEP 7 — CREATE CONTENT PROFILE
+        # -------------------------------------------------
+
+        print()
+        print("[Agent 1 - Step 7]")
         print("Creating content profile...")
 
         content_profile = {
@@ -165,13 +178,9 @@ class Agent1VideoAnalyzer:
 
             "audio_analysis": audio_results,
 
-            "hook_analysis": {
-                "status": "pending"
-            },
+            "hook_analysis": hook_info,
 
-            "structure_analysis": {
-                "status": "pending"
-            }
+            "structure_analysis": structure_info
         }
 
         print("✓ Content profile created.")
@@ -186,3 +195,55 @@ class Agent1VideoAnalyzer:
         print("=" * 60)
 
         return content_profile
+
+    def _analyze_hook(self, text_results, audio_results, visual_results):
+        transcript = audio_results.get("transcript", "")
+        has_spoken_words = audio_results.get("speech_detected", False)
+        first_frame_text = [t.get("text", "") for t in text_results if "frame_1" in t.get("frame", "")]
+
+        hook_elements = []
+        if first_frame_text:
+            hook_elements.append(f"On-screen text: '{first_frame_text[0]}'")
+        if has_spoken_words and transcript and transcript != "(No spoken words detected in video)":
+            words = transcript.split()
+            first_words = " ".join(words[:8])
+            hook_elements.append(f"Spoken opening: '{first_words}...'")
+
+        scene = visual_results.get("scene", "visual action")
+        strength = "Strong" if (first_frame_text or has_spoken_words) else "Moderate"
+        hook_type = "Spoken Dialogue Hook" if has_spoken_words else ("Text Banner Hook" if first_frame_text else "Visual Action Hook")
+
+        return {
+            "status": "completed",
+            "hook_type": hook_type,
+            "hook_strength": strength,
+            "primary_cues": hook_elements if hook_elements else [f"Visual opening depicting {scene}"],
+            "evaluation": "Clear opening stimuli anchoring viewer attention in the first 3 seconds." if strength == "Strong" else "Subtle opening; adding bold on-screen captions or spoken hook would further boost 3-second retention."
+        }
+
+    def _analyze_structure(self, video_info, text_results, audio_results):
+        duration = video_info.get("duration_seconds", 0)
+        has_speech = audio_results.get("speech_detected", False)
+
+        if duration <= 15:
+            format_type = "Micro-Short (Fast High Pacing)"
+        elif duration <= 60:
+            format_type = "Standard Short-Form (High Engagement)"
+        else:
+            format_type = "Long-Form Deep Dive"
+
+        pacing = "Fast and punchy" if duration <= 30 else "Steady narrative"
+        if duration <= 15:
+            rec = f"Micro-short length ({duration:.1f}s) is primed for seamless rewatch loops and rapid algorithmic swipe-feed testing."
+        elif duration <= 60:
+            rec = f"Optimal short-form duration ({duration:.1f}s) for Reels/TikTok/Shorts. Pacing ({pacing.lower()}) sustains viewer momentum through the climax."
+        else:
+            rec = f"Extended duration ({duration:.1f}s) requires strong chapter markers and visual resets every 8–10 seconds to combat mid-video drop-off."
+
+        return {
+            "status": "completed",
+            "pacing": pacing,
+            "format_category": format_type,
+            "storytelling_mode": "Audiovisual demonstration" if has_speech else "Visual-led observational content",
+            "retention_recommendation": rec
+        }
