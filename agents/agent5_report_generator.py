@@ -16,10 +16,22 @@ Outputs:
 =========================================================
 """
 
+import sys
 import json
 import os
 from datetime import datetime
 from typing import Dict, Any, List
+
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+if hasattr(sys.stderr, "reconfigure"):
+    try:
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
 from services.llm_service import call_llm_json
 
 

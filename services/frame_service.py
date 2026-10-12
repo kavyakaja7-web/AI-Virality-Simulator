@@ -35,6 +35,8 @@ def get_video_info(video_path):
     video.release()
 
     return {
+        "filename": os.path.basename(video_path),
+        "video_path": video_path,
         "duration_seconds": round(duration, 2),
         "fps": round(fps, 2),
         "total_frames": total_frames,

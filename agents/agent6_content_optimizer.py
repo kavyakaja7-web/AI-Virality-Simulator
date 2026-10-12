@@ -388,51 +388,49 @@ Execute these timeline adjustments in your video editor (CapCut, Premiere Pro, D
     <title>AI Virality Simulator — Agent 6 Viral Optimization Playbook</title>
     <style>
         :root {{
-            --bg: #090d16;
-            --card-bg: rgba(20, 27, 45, 0.7);
+            --bg: #0b0f19;
+            --card-bg: #111827;
             --border: rgba(255, 255, 255, 0.08);
+            --border-subtle: rgba(255, 255, 255, 0.12);
             --primary: #3b82f6;
-            --primary-glow: rgba(59, 130, 246, 0.3);
-            --accent: #8b5cf6;
-            --accent-glow: rgba(139, 92, 246, 0.3);
+            --accent: #6366f1;
             --success: #10b981;
-            --success-glow: rgba(16, 185, 129, 0.25);
             --warning: #f59e0b;
             --danger: #ef4444;
             --text-main: #f8fafc;
             --text-sub: #94a3b8;
         }}
-        * {{ box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }}
+        * {{ box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Plus Jakarta Sans", sans-serif; }}
         body {{ background: var(--bg); color: var(--text-main); padding: 32px 20px; line-height: 1.5; }}
         .container {{ max-width: 1200px; margin: 0 auto; }}
 
         /* Header */
         .header {{
             display: flex; justify-content: space-between; align-items: center;
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
-            border: 1px solid var(--border); border-radius: 16px; padding: 24px 32px;
-            backdrop-filter: blur(12px); margin-bottom: 24px;
+            background: var(--card-bg);
+            border: 1px solid var(--border); border-radius: 14px; padding: 20px 28px;
+            margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
         }}
-        .header h1 {{ font-size: 24px; font-weight: 800; background: linear-gradient(90deg, #60a5fa, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }}
-        .header-meta {{ display: flex; gap: 16px; font-size: 13px; color: var(--text-sub); }}
-        .badge {{ background: rgba(59, 130, 246, 0.15); color: #93c5fd; padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(59, 130, 246, 0.3); }}
+        .header h1 {{ font-size: 22px; font-weight: 700; color: #f8fafc; }}
+        .header-meta {{ display: flex; gap: 12px; font-size: 13px; color: var(--text-sub); }}
+        .badge {{ background: rgba(59, 130, 246, 0.12); color: #60a5fa; padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(59, 130, 246, 0.25); font-weight: 600; font-size: 12px; }}
 
         /* Scorecard Section */
         .scorecard-banner {{
             display: grid; grid-template-columns: 1.2fr 2fr; gap: 20px; margin-bottom: 24px;
         }}
         .uplift-dial-card {{
-            background: linear-gradient(135deg, rgba(20, 27, 45, 0.85), rgba(13, 20, 36, 0.95));
-            border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 16px; padding: 24px;
+            background: var(--card-bg);
+            border: 1px solid var(--border); border-radius: 14px; padding: 24px;
             display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
         }}
-        .dial-label {{ font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-sub); margin-bottom: 8px; }}
+        .dial-label {{ font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-sub); margin-bottom: 8px; font-weight: 600; }}
         .dial-comparison {{ display: flex; align-items: baseline; gap: 12px; margin: 12px 0; }}
         .score-old {{ font-size: 32px; font-weight: 700; color: #64748b; text-decoration: line-through; }}
-        .score-arrow {{ font-size: 28px; color: var(--accent); }}
-        .score-new {{ font-size: 56px; font-weight: 900; color: #34d399; text-shadow: 0 0 24px rgba(52, 211, 153, 0.4); }}
-        .score-gain-pill {{ background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); padding: 4px 14px; border-radius: 20px; font-size: 14px; font-weight: 700; }}
+        .score-arrow {{ font-size: 24px; color: var(--primary); }}
+        .score-new {{ font-size: 56px; font-weight: 800; color: #10b981; }}
+        .score-gain-pill {{ background: rgba(16, 185, 129, 0.12); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.25); padding: 4px 12px; border-radius: 6px; font-size: 13px; font-weight: 600; }}
 
         .metrics-grid {{
             display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;

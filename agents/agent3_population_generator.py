@@ -18,8 +18,20 @@ That is Agent 4's responsibility.
 =========================================================
 """
 
+import sys
 import json
 import os
+
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+if hasattr(sys.stderr, "reconfigure"):
+    try:
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
 
 from services.population_service import (
     generate_virtual_population
