@@ -1,18 +1,32 @@
 import os
+import sys
 import json
+
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+if hasattr(sys.stderr, "reconfigure"):
+    try:
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
 
 from agents.agent1_video_analyzer import Agent1VideoAnalyzer
 from agents.agent2_audience_discovery import Agent2AudienceDiscovery
 from agents.agent3_population_generator import Agent3PopulationGenerator
 from agents.agent4_engagement_predictor import Agent4EngagementPredictor
 from agents.agent5_report_generator import Agent5ReportGenerator
+from agents.agent6_content_optimizer import Agent6ContentOptimizer
 
 
 # -------------------------------------------------------
 # VIDEO INPUT
 # -------------------------------------------------------
 
-VIDEO_PATH = "videos/test3.mp4"
+VIDEO_PATH = "videos/test.mp4" if os.path.exists("videos/test.mp4") else "videos/test3.mp4"
+
 
 
 # -------------------------------------------------------
@@ -127,7 +141,39 @@ print("[✓ Saved to outputs/report.html]")
 agent5.print_terminal_summary(virality_report)
 
 
+# -------------------------------------------------------
+# AGENT 6: CONTENT OPTIMIZER & VIRAL FIXER
+# -------------------------------------------------------
+
+agent6 = Agent6ContentOptimizer()
+optimization_plan = agent6.optimize(
+    content_profile=content_profile,
+    audience_profile=audience_profile,
+    population_profile=population_profile,
+    engagement_prediction=engagement_prediction,
+    virality_report=virality_report
+)
+
 print()
 print("=" * 60)
-print("🎉 AI VIRALITY SIMULATOR PIPELINE COMPLETED (AGENTS 1–5)")
+print("🚀 AGENT 6 OUTPUT — VIRAL CONTENT OPTIMIZATION PLAN")
 print("=" * 60)
+print(json.dumps(optimization_plan, indent=4))
+print("\n[✓ Saved to outputs/viral_optimization_plan.json]")
+print("[✓ Saved to outputs/VIRAL_OPTIMIZATION_PLAN.md]")
+print("[✓ Saved to outputs/optimization_dashboard.html]")
+
+# Display Executive Optimization Playbook in Terminal
+agent6.print_terminal_summary(optimization_plan)
+
+
+print()
+print("=" * 60)
+print("🎉 AI VIRALITY SIMULATOR PIPELINE COMPLETED (AGENTS 1–6)")
+print("=" * 60)
+print()
+print("🌐 INTERACTIVE DASHBOARD READY:")
+print("   • Direct Browser View: file://" + os.path.abspath("dashboard.html").replace("\\", "/"))
+print("   • Live Web Server:     Run 'python serve.py' to launch on http://localhost:8000/dashboard.html")
+print("=" * 60)
+

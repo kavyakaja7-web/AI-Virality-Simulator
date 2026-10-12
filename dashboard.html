@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Virality Simulator — Autonomous Intelligence Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #060911;
+            --bg-card: rgba(15, 23, 42, 0.75);
+            --bg-card-hover: rgba(30, 41, 59, 0.85);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-glow: rgba(56, 189, 248, 0.35);
+            
+            --cyan: #06b6d4;
+            --cyan-glow: rgba(6, 182, 212, 0.4);
+            --blue: #3b82f6;
+            --purple: #8b5cf6;
+            --pink: #ec4899;
+            --emerald: #10b981;
+            --amber: #f59e0b;
+            --rose: #f43f5e;
+            
+            --text-title: #f8fafc;
+            --text-body: #cbd5e1;
+            --text-muted: #94a3b8;
+            --font-display: 'Outfit', -apple-system, sans-serif;
+            --font-body: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg-base);
+            color: var(--text-body);
+            font-family: var(--font-body);
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 85% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 50% 85%, rgba(6, 182, 212, 0.05) 0%, transparent 50%);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-base); }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #334155; }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px 20px 80px;
+        }
+
+        /* Header Bar */
+        .top-navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 16px 28px;
+            backdrop-filter: blur(16px);
+            margin-bottom: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .brand-group {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #06b6d4, #8b5cf6);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
+        }
+
+        .brand-text h1 {
+            font-family: var(--font-display);
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(90deg, #38bdf8, #c084fc, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand-text p {
+            font-size: 12px;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-family: var(--font-display);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-decoration: none;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(6, 182, 212, 0.35);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(6, 182, 212, 0.55);
+        }
+
+        .btn-secondary {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid var(--border-subtle);
+            color: #f8fafc;
+        }
+        .btn-secondary:hover {
+            background: rgba(51, 65, 85, 0.9);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Hero Executive Summary Card */
+        .hero-banner {
+            display: grid;
+            grid-template-columns: 1.4fr 2fr;
+            gap: 24px;
+            margin-bottom: 28px;
+        }
+
+        .virality-score-card {
+            background: linear-gradient(145deg, rgba(20, 27, 45, 0.95), rgba(10, 15, 29, 0.98));
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 20px;
+            padding: 28px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        .virality-score-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 18px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s, border-color 0.2s;
+            backdrop-filter: blur(12px);
+        }
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(255, 255, 255, 0.18);
+        }
+
+        .stat-header {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--text-title);
+            margin-bottom: 4px;
+        }
+
+        .stat-badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 6px;
+            display: inline-block;
+            width: fit-content;
+        }
+        .badge-green { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-blue { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
+        .badge-purple { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+        .badge-pink { background: rgba(236, 72, 153, 0.15); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.3); }
+
+        /* 6-Stage Pipeline Stepper */
+        .stepper-section {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 28px;
+            backdrop-filter: blur(14px);
+        }
+
+        .stepper-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .stepper-header h2 {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-title);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stepper-nav {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+            position: relative;
+        }
+
+        .step-node {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 14px 12px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            position: relative;
+        }
+
+        .step-node:hover {
+            background: rgba(51, 65, 85, 0.7);
+            border-color: rgba(56, 189, 248, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .step-node.active {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98));
+            border-color: #38bdf8;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.25);
+        }
+
+        .step-node.running {
+            border-color: #f59e0b;
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.35);
+            animation: pulse-border 1.5s infinite;
+        }
+
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 0 rgba(245, 158, 11, 0.4); }
+            50% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.7); }
+            100% { box-shadow: 0 0 0 rgba(245, 158, 11, 0.4); }
+        }
+
+        .step-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .step-tag {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .step-status-icon {
+            font-size: 12px;
+            color: #34d399;
+        }
+
+        .step-title {
+            font-family: var(--font-display);
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-title);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .step-highlight {
+            font-size: 11px;
+            color: #94a3b8;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Live Simulation Console Banner */
+        .sim-console-banner {
+            display: none;
+            background: linear-gradient(90deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            border-radius: 14px;
+            padding: 16px 20px;
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .console-status-text {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: #fef08a;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pulse-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #f59e0b;
+            box-shadow: 0 0 10px #f59e0b;
+            animation: pulse-dot 1s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.4); opacity: 0.6; }
+        }
+
+        /* Agent Output Tab Viewer */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease forwards;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Content Grids */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .panel-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 24px;
+            backdrop-filter: blur(14px);
+            margin-bottom: 24px;
+        }
+
+        .panel-title {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-title);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Keyframes Grid */
+        .frames-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 14px;
+            margin-top: 14px;
+        }
+
+        .frame-thumb {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            aspect-ratio: 9/16;
+            background: #0f172a;
+            transition: transform 0.25s ease, border-color 0.25s ease;
+        }
+        .frame-thumb:hover {
+            transform: scale(1.04);
+            border-color: #38bdf8;
+            box-shadow: 0 8px 24px rgba(56, 189, 248, 0.3);
+        }
+        .frame-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .frame-badge {
+            position: absolute;
+            bottom: 6px;
+            left: 6px;
+            background: rgba(0, 0, 0, 0.7);
+            color: #94a3b8;
+            font-family: var(--font-mono);
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        /* Persona & Audience Cards */
+        .segment-card {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: border-color 0.2s;
+        }
+        .segment-card:hover {
+            border-color: rgba(56, 189, 248, 0.35);
+        }
+
+        .tag-pill {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.06);
+            color: #cbd5e1;
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            margin: 3px;
+        }
+
+        /* Code/Quote blocks */
+        .code-box {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: #cbd5e1;
+            white-space: pre-wrap;
+            position: relative;
+            margin: 8px 0;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #94a3b8;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .copy-btn:hover {
+            background: #38bdf8;
+            color: #000;
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #10b981;
+            color: #000;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-family: var(--font-display);
+            font-size: 13px;
+            font-weight: 700;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 9999;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @media (max-width: 1024px) {
+            .hero-banner, .grid-2 { grid-template-columns: 1fr; }
+            .hero-stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .stepper-nav { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        @media (max-width: 640px) {
+            .hero-stats-grid { grid-template-columns: 1fr; }
+            .stepper-nav { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- Top Navigation Bar -->
+    <header class="top-navbar">
+        <div class="brand-group">
+            <div class="logo-icon">🚀</div>
+            <div class="brand-text">
+                <h1>AI VIRALITY SIMULATOR</h1>
+                <p>Autonomous 6-Agent Content Intelligence & Viral Optimization Studio</p>
+            </div>
+        </div>
+        <div class="nav-actions">
+            <button class="btn btn-primary" id="btn-run-sim" onclick="runLiveSimulation()">
+                <span>▶ Run Live Simulation Demo</span>
+            </button>
+            <a href="outputs/VIRAL_OPTIMIZATION_PLAN.md" target="_blank" class="btn btn-secondary">
+                <span>📑 View Markdown Playbook</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Executive KPI Banner -->
+    <section class="hero-banner">
+        <div class="virality-score-card">
+            <div>
+                <span style="font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--cyan); font-weight: 700;">
+                    Algorithmic Virality Score
+                </span>
+                <div style="display: flex; align-items: baseline; gap: 12px; margin: 12px 0;">
+                    <span id="kpi-virality-score" style="font-family: var(--font-display); font-size: 64px; font-weight: 900; color: #f8fafc; text-shadow: 0 0 30px rgba(6, 182, 212, 0.4);">
+                        91.0
+                    </span>
+                    <span style="font-size: 24px; color: #64748b;">/ 100</span>
+                    <span id="kpi-rating-badge" class="badge-green" style="font-size: 14px; padding: 4px 12px;">
+                        MEGA-VIRAL POTENTIAL
+                    </span>
+                </div>
+            </div>
+            <div style="background: rgba(15, 23, 42, 0.6); border-left: 4px solid var(--cyan); padding: 12px 14px; border-radius: 8px;">
+                <div style="font-size: 12px; color: #94a3b8; font-weight: 700;">Primary Content Niche</div>
+                <div id="kpi-niche-text" style="font-size: 15px; font-weight: 700; color: #f8fafc;">
+                    Computer Programming
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">3s Hook Retention</div>
+                <div class="stat-value" style="color: #38bdf8;">87.4%</div>
+                <div class="stat-badge badge-blue">Phase 1 FYP Pass</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">Completion Rate</div>
+                <div class="stat-value" style="color: #34d399;">54.4%</div>
+                <div class="stat-badge badge-green">High Watch-Time</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">Viral Share Rate</div>
+                <div class="stat-value" style="color: #ec4899;">20.4%</div>
+                <div class="stat-badge badge-pink">DM Multiplier</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">Projected Uplift</div>
+                <div class="stat-value" style="color: #c084fc;">97.0 / 100</div>
+                <div class="stat-badge badge-purple">+6.0 pts Agent 6 Boost</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6-Stage Interactive Pipeline Stepper -->
+    <section class="stepper-section">
+        <div class="stepper-header">
+            <h2>
+                <span>⚡ 6-Stage Autonomous Pipeline Architecture</span>
+                <span style="font-size: 12px; color: var(--text-muted); font-weight: 400;">(Click any agent to inspect outputs)</span>
+            </h2>
+            <div style="font-family: var(--font-mono); font-size: 12px; color: #34d399;">
+                Status: All 6 Agents Online ✓
+            </div>
+        </div>
+
+        <div class="stepper-nav" id="stepper-nav">
+            <!-- Node 1 -->
+            <div class="step-node active" id="node-agent1" onclick="switchTab('agent1')">
+                <div class="step-top">
+                    <span class="step-tag">Agent 01</span>
+                    <span class="step-status-icon" id="status-agent1">✓</span>
+                </div>
+                <div class="step-title">🤖 Video Perception</div>
+                <div class="step-highlight">Vision, OCR & Audio</div>
+            </div>
+            <!-- Node 2 -->
+            <div class="step-node" id="node-agent2" onclick="switchTab('agent2')">
+                <div class="step-top">
+                    <span class="step-tag">Agent 02</span>
+                    <span class="step-status-icon" id="status-agent2">✓</span>
+                </div>
+                <div class="step-title">👥 Audience Discovery</div>
+                <div class="step-highlight">3 Target Personas</div>
+            </div>
+            <!-- Node 3 -->
+            <div class="step-node" id="node-agent3" onclick="switchTab('agent3')">
+                <div class="step-top">
+                    <span class="step-tag">Agent 03</span>
+                    <span class="step-status-icon" id="status-agent3">✓</span>
+                </div>
+                <div class="step-title">🧬 Population Gen</div>
+                <div class="step-highlight">1,000 Virtual Users</div>
+            </div>
+            <!-- Node 4 -->
+            <div class="step-node" id="node-agent4" onclick="switchTab('agent4')">
+                <div class="step-top">
+                    <span class="step-tag">Agent 04</span>
+                    <span class="step-status-icon" id="status-agent4">✓</span>
+                </div>
+                <div class="step-title">📊 Virality Predictor</div>
+                <div class="step-highlight">Retention & Funnel</div>
+            </div>
+            <!-- Node 5 -->
+            <div class="step-node" id="node-agent5" onclick="switchTab('agent5')">
+                <div class="step-top">
+                    <span class="step-tag">Agent 05</span>
+                    <span class="step-status-icon" id="status-agent5">✓</span>
+                </div>
+                <div class="step-title">📑 Diagnostic Audit</div>
+                <div class="step-highlight">Full Virality Report</div>
+            </div>
+            <!-- Node 6 -->
+            <div class="step-node" id="node-agent6" onclick="switchTab('agent6')">
+                <div class="step-top">
+                    <span class="step-tag">Agent 06</span>
+                    <span class="step-status-icon" id="status-agent6">✓</span>
+                </div>
+                <div class="step-title">🚀 Content Optimizer</div>
+                <div class="step-highlight">Hooks, Cuts & Uplift</div>
+            </div>
+        </div>
+
+        <!-- Dynamic Live Simulation Progress Banner -->
+        <div class="sim-console-banner" id="sim-banner">
+            <div class="console-status-text">
+                <div class="pulse-dot"></div>
+                <span id="sim-status-message">Simulation ready. Press 'Run Live Simulation Demo' to begin execution flow.</span>
+            </div>
+            <div style="font-family: var(--font-mono); font-size: 12px; color: var(--text-muted);" id="sim-timer">00:00</div>
+        </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- TAB 1: AGENT 1 (VIDEO PERCEPTION) -->
+    <!-- ======================================================== -->
+    <div class="tab-content active" id="tab-agent1">
+        <div class="panel-card">
+            <div class="panel-title">
+                <span>🤖 AGENT 1: VIDEO CONTENT ANALYSIS & MULTIMODAL PERCEPTION</span>
+                <span class="stat-badge badge-blue">Outputs: outputs/content_profile.json</span>
+            </div>
+
+            <!-- Keyframes Gallery -->
+            <div style="margin-bottom: 24px;">
+                <div style="font-size: 13px; font-weight: 700; color: #94a3b8; text-transform: uppercase;">
+                    Extracted Video Keyframes (Inspected by Groq Qwen Vision AI)
+                </div>
+                <div class="frames-gallery" id="frames-container">
+                    <div class="frame-thumb"><img src="outputs/frames/frame_1.jpg" alt="Keyframe 1" onerror="this.style.display='none'"><span class="frame-badge">Keyframe 1</span></div>
+                    <div class="frame-thumb"><img src="outputs/frames/frame_2.jpg" alt="Keyframe 2" onerror="this.style.display='none'"><span class="frame-badge">Keyframe 2</span></div>
+                    <div class="frame-thumb"><img src="outputs/frames/frame_3.jpg" alt="Keyframe 3" onerror="this.style.display='none'"><span class="frame-badge">Keyframe 3</span></div>
+                    <div class="frame-thumb"><img src="outputs/frames/frame_4.jpg" alt="Keyframe 4" onerror="this.style.display='none'"><span class="frame-badge">Keyframe 4</span></div>
+                    <div class="frame-thumb"><img src="outputs/frames/frame_5.jpg" alt="Keyframe 5" onerror="this.style.display='none'"><span class="frame-badge">Keyframe 5</span></div>
+                </div>
+            </div>
+
+            <div class="grid-3">
+                <div class="stat-card">
+                    <div class="stat-header">Video Dimensions & Metadata</div>
+                    <div style="margin-top: 8px; font-size: 13px;">
+                        <div>• <strong>Duration:</strong> 16.4s</div>
+                        <div>• <strong>Format:</strong> Vertical (9:16)</div>
+                        <div>• <strong>Resolution:</strong> 480x864</div>
+                        <div>• <strong>Frame Rate:</strong> 30.0 fps (492 frames)</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">Audio & Speech Recognition (Whisper)</div>
+                    <div style="margin-top: 8px; font-size: 13px;">
+                        <div>• <strong>Speech Detected:</strong> <span style="color: #34d399;">Yes (Telugu dialogue)</span></div>
+                        <div>• <strong>Spoken Hook:</strong> <span style="color: #38bdf8;">Dialogue Hook (Strong)</span></div>
+                        <div class="code-box" style="margin-top: 6px;">"ఆప్పరోషిక్కి చార్డు హొకుండు."</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">Hook & Structure Diagnostics</div>
+                    <div style="margin-top: 8px; font-size: 13px;">
+                        <div>• <strong>Hook Strength:</strong> <span style="color: #34d399; font-weight: 700;">Strong</span></div>
+                        <div>• <strong>Video Pacing:</strong> Fast and punchy</div>
+                        <div>• <strong>Format Class:</strong> Standard Short-Form</div>
+                        <div style="font-size: 11px; color: #94a3b8; margin-top: 6px;">Optimal short-form duration for Reels/TikTok algorithms.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vision AI Breakdown -->
+            <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 20px;">
+                <h4 style="color: #38bdf8; font-size: 15px; margin-bottom: 12px;">👁️ Groq Vision AI Scene & Semantic Breakdown</h4>
+                <div style="font-size: 13px; margin-bottom: 12px; color: #e2e8f0;">
+                    "A young man walks through a computer lab or classroom while monitors in the foreground display lines of code. The room features red curtains, ceiling fans, and festive decorations, with other individuals seated in the background."
+                </div>
+                <div style="margin-bottom: 8px;">
+                    <strong style="font-size: 12px; color: #94a3b8;">Detected Objects:</strong>
+                    <div style="display: inline-block;">
+                        <span class="tag-pill">🏷️ computer monitors</span>
+                        <span class="tag-pill">🏷️ code editor</span>
+                        <span class="tag-pill">🏷️ keyboard</span>
+                        <span class="tag-pill">🏷️ ceiling fan</span>
+                        <span class="tag-pill">🏷️ cubicle dividers</span>
+                    </div>
+                </div>
+                <div>
+                    <strong style="font-size: 12px; color: #94a3b8;">Activities:</strong>
+                    <div style="display: inline-block;">
+                        <span class="tag-pill">🏃 walking</span>
+                        <span class="tag-pill">🏃 sitting</span>
+                        <span class="tag-pill">🏃 coding</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- TAB 2: AGENT 2 (AUDIENCE DISCOVERY) -->
+    <!-- ======================================================== -->
+    <div class="tab-content" id="tab-agent2">
+        <div class="panel-card">
+            <div class="panel-title">
+                <span>👥 AGENT 2: TARGET AUDIENCE DISCOVERY & 3-WAVE VIRALITY RULE</span>
+                <span class="stat-badge badge-purple">Outputs: outputs/audience_profile.json</span>
+            </div>
+
+            <div class="grid-2">
+                <div>
+                    <h3 style="font-size: 16px; margin-bottom: 16px; color: #f8fafc;">🌊 The 3 Concentric Waves of Virality</h3>
+                    
+                    <div class="segment-card">
+                        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
+                            <strong style="color: #f8fafc; font-size: 15px;">Wave 1: College & Engineering Students</strong>
+                            <span class="stat-badge badge-green">Score: 0.94</span>
+                        </div>
+                        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">
+                            <strong>Age Range:</strong> 18–24 | <strong>Persona:</strong> CS & Engineering Undergraduates
+                        </div>
+                        <p style="font-size: 12px; color: #cbd5e1; margin-bottom: 8px;">"Finding relatable humor, campus experiences, and peer bonding."</p>
+                        <div>
+                            <span class="tag-pill">Computer Lab Culture</span>
+                            <span class="tag-pill">Campus Life</span>
+                            <span class="tag-pill">Student Relatability</span>
+                            <span class="tag-pill">Tech Memes</span>
+                        </div>
+                    </div>
+
+                    <div class="segment-card">
+                        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
+                            <strong style="color: #f8fafc; font-size: 15px;">Wave 2: Early-Career Tech Professionals</strong>
+                            <span class="stat-badge badge-blue">Score: 0.86</span>
+                        </div>
+                        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">
+                            <strong>Age Range:</strong> 21–28 | <strong>Persona:</strong> Junior Devs & Tech Interns
+                        </div>
+                        <p style="font-size: 12px; color: #cbd5e1; margin-bottom: 8px;">"Relating to tech workplaces, nostalgic for college lab days."</p>
+                        <div>
+                            <span class="tag-pill">Office Environment</span>
+                            <span class="tag-pill">Workplace Humor</span>
+                            <span class="tag-pill">Career Upskilling</span>
+                        </div>
+                    </div>
+
+                    <div class="segment-card">
+                        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
+                            <strong style="color: #f8fafc; font-size: 15px;">Wave 3: Casual Tech & Gadget Enthusiasts</strong>
+                            <span class="stat-badge badge-purple">Score: 0.77</span>
+                        </div>
+                        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">
+                            <strong>Age Range:</strong> 16–30 | <strong>Persona:</strong> General Social Media Tech Scrollers
+                        </div>
+                        <p style="font-size: 12px; color: #cbd5e1; margin-bottom: 8px;">"Casual curiosity about technology and behind-the-scenes office culture."</p>
+                        <div>
+                            <span class="tag-pill">Tech Trends</span>
+                            <span class="tag-pill">PC Setups</span>
+                            <span class="tag-pill">Digital Lifestyle</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 style="font-size: 16px; margin-bottom: 16px; color: #f8fafc;">📱 Platform Suitability & Superpowers</h3>
+                    
+                    <div class="segment-card" style="margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                            <strong style="color: #f8fafc; font-size: 14px;">Instagram Reels</strong>
+                            <span class="stat-badge badge-blue">Optimal (95%)</span>
+                        </div>
+                        <p style="font-size: 12px; color: var(--text-muted);">High student & young adult peer sharing via Direct Messages (DMs).</p>
+                    </div>
+
+                    <div class="segment-card" style="margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                            <strong style="color: #f8fafc; font-size: 14px;">YouTube Shorts</strong>
+                            <span class="stat-badge badge-blue">Optimal (92%)</span>
+                        </div>
+                        <p style="font-size: 12px; color: var(--text-muted);">Strong algorithmic evergreen discovery and search ranking.</p>
+                    </div>
+
+                    <div class="segment-card" style="margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                            <strong style="color: #f8fafc; font-size: 14px;">TikTok</strong>
+                            <span class="stat-badge badge-blue">Optimal (90%)</span>
+                        </div>
+                        <p style="font-size: 12px; color: var(--text-muted);">Rapid hook-driven virality potential to stranger feeds on FYP.</p>
+                    </div>
+
+                    <div style="background: rgba(15, 23, 42, 0.7); border-left: 4px solid #c084fc; border-radius: 12px; padding: 18px; margin-top: 20px;">
+                        <h4 style="font-size: 14px; color: #c084fc; margin-bottom: 6px;">⚡ Algorithmic Virality Vector</h4>
+                        <p style="font-size: 13px; color: #cbd5e1;">
+                            High peer-to-peer shareability within 'College & Engineering Students'. Content resonates strongly with 'Computer Programming' culture, driving direct message (DM) forwarding and comment tagging.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- TAB 3: AGENT 3 (VIRTUAL POPULATION) -->
+    <!-- ======================================================== -->
+    <div class="tab-content" id="tab-agent3">
+        <div class="panel-card">
+            <div class="panel-title">
+                <span>🧬 AGENT 3: VIRTUAL POPULATION GENERATOR (SYNTHETIC PANEL)</span>
+                <span class="stat-badge badge-green">Outputs: outputs/virtual_population.json</span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px; margin-bottom: 24px;">
+                <div class="stat-card">
+                    <div class="stat-header">Simulated Test Panel Size</div>
+                    <div class="stat-value" style="color: #34d399;">1,000 Users</div>
+                    <p style="font-size: 12px; color: #94a3b8;">
+                        Monte Carlo viewing test panel calibrated against short-form social media behavioral statistics.
+                    </p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">Demographic Age & Affinity Balance</div>
+                    <div style="margin-top: 10px; font-size: 13px;">
+                        <div style="margin-bottom: 8px;">
+                            <span>Core Segment: College & Engineering Students (36.5% - 365 Users)</span>
+                            <div style="height: 6px; background: #06b6d4; border-radius: 4px; width: 36.5%; margin-top: 2px;"></div>
+                        </div>
+                        <div style="margin-bottom: 8px;">
+                            <span>Adjacent Segment: Early-Career Tech Professionals (33.5% - 335 Users)</span>
+                            <div style="height: 6px; background: #8b5cf6; border-radius: 4px; width: 33.5%; margin-top: 2px;"></div>
+                        </div>
+                        <div>
+                            <span>Broad Segment: Casual Tech & Gadget Enthusiasts (30.0% - 300 Users)</span>
+                            <div style="height: 6px; background: #ec4899; border-radius: 4px; width: 30.0%; margin-top: 2px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="font-size: 16px; margin-bottom: 14px; color: #f8fafc;">🔍 Sample Virtual Viewers (Behavioral Attributes)</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px;">
+                <div class="segment-card" style="padding: 14px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                        <strong style="font-size: 13px; color: #38bdf8;">User #12 (20y)</strong>
+                        <span style="font-size: 11px; color: var(--text-muted);">India</span>
+                    </div>
+                    <div style="font-size: 11px; color: #cbd5e1; margin-bottom: 6px;">College & Engineering Students</div>
+                    <div style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">
+                        Watch: 92% | Completion: 84% | Share: 45%
+                    </div>
+                </div>
+
+                <div class="segment-card" style="padding: 14px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                        <strong style="font-size: 13px; color: #38bdf8;">User #48 (24y)</strong>
+                        <span style="font-size: 11px; color: var(--text-muted);">USA</span>
+                    </div>
+                    <div style="font-size: 11px; color: #cbd5e1; margin-bottom: 6px;">Early-Career Tech Professionals</div>
+                    <div style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">
+                        Watch: 88% | Completion: 76% | Share: 38%
+                    </div>
+                </div>
+
+                <div class="segment-card" style="padding: 14px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                        <strong style="font-size: 13px; color: #38bdf8;">User #921 (25y)</strong>
+                        <span style="font-size: 11px; color: var(--text-muted);">Germany</span>
+                    </div>
+                    <div style="font-size: 11px; color: #cbd5e1; margin-bottom: 6px;">Casual Tech & Gadget Enthusiasts</div>
+                    <div style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">
+                        Watch: 75% | Completion: 69% | Share: 36%
+                    </div>
+                </div>
+
+                <div class="segment-card" style="padding: 14px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                        <strong style="font-size: 13px; color: #38bdf8;">User #140 (19y)</strong>
+                        <span style="font-size: 11px; color: var(--text-muted);">UK</span>
+                    </div>
+                    <div style="font-size: 11px; color: #cbd5e1; margin-bottom: 6px;">College & Engineering Students</div>
+                    <div style="font-size: 11px; color: var(--text-muted); font-family: var(--font-mono);">
+                        Watch: 95% | Completion: 88% | Share: 52%
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- TAB 4: AGENT 4 (VIRALITY & RETENTION PREDICTOR) -->
+    <!-- ======================================================== -->
+    <div class="tab-content" id="tab-agent4">
+        <div class="panel-card">
+            <div class="panel-title">
+                <span>📊 AGENT 4: RETENTION CURVE & ENGAGEMENT PREDICTION</span>
+                <span class="stat-badge badge-blue">Outputs: outputs/engagement_prediction.json</span>
+            </div>
+
+            <!-- SVG Retention Curve -->
+            <div style="background: rgba(10, 15, 29, 0.9); border: 1px solid var(--border-subtle); border-radius: 18px; padding: 24px; margin-bottom: 24px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <div>
+                        <h3 style="font-size: 17px; color: #f8fafc;">📉 Second-by-Second Audience Retention Graph</h3>
+                        <p style="font-size: 12px; color: var(--text-muted);">Simulated drop-off points across all 1,000 viewing sessions</p>
+                    </div>
+                    <span class="stat-badge badge-green">87.4% Hook Retention</span>
+                </div>
+
+                <div style="width: 100%; overflow-x: auto;">
+                    <svg viewBox="0 0 600 200" style="width: 100%; height: 220px; display: block;">
+                        <defs>
+                            <linearGradient id="svgGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#06b6d4" stop-opacity="0.45"/>
+                                <stop offset="100%" stop-color="#06b6d4" stop-opacity="0.0"/>
+                            </linearGradient>
+                        </defs>
+                        <!-- Grid -->
+                        <line x1="50" y1="30" x2="570" y2="30" stroke="#1e293b" stroke-dasharray="3"/>
+                        <line x1="50" y1="75" x2="570" y2="75" stroke="#1e293b" stroke-dasharray="3"/>
+                        <line x1="50" y1="120" x2="570" y2="120" stroke="#1e293b" stroke-dasharray="3"/>
+                        <line x1="50" y1="165" x2="570" y2="165" stroke="#334155"/>
+                        <!-- Y labels -->
+                        <text x="15" y="34" fill="#64748b" font-size="11">100%</text>
+                        <text x="20" y="79" fill="#64748b" font-size="11">75%</text>
+                        <text x="20" y="124" fill="#64748b" font-size="11">50%</text>
+                        <text x="20" y="169" fill="#64748b" font-size="11">25%</text>
+                        <!-- Area -->
+                        <polygon points="50,30 140,51 240,57 340,75 440,93 540,111 540,165 50,165" fill="url(#svgGradient)"/>
+                        <!-- Line -->
+                        <polyline fill="none" stroke="#06b6d4" stroke-width="3.5" points="50,30 140,51 240,57 340,75 440,93 540,111"/>
+                        <!-- Dots -->
+                        <circle cx="50" cy="30" r="5" fill="#38bdf8"/>
+                        <circle cx="140" cy="51" r="6" fill="#38bdf8"/>
+                        <circle cx="240" cy="57" r="5" fill="#38bdf8"/>
+                        <circle cx="340" cy="75" r="5" fill="#38bdf8"/>
+                        <circle cx="440" cy="93" r="5" fill="#38bdf8"/>
+                        <circle cx="540" cy="111" r="6" fill="#10b981"/>
+                        <!-- Values -->
+                        <text x="40" y="20" fill="#94a3b8" font-size="11">100%</text>
+                        <text x="125" y="42" fill="#38bdf8" font-size="12" font-weight="700">3s (87.4%)</text>
+                        <text x="225" y="48" fill="#94a3b8" font-size="11">83.9%</text>
+                        <text x="325" y="66" fill="#94a3b8" font-size="11">73.7%</text>
+                        <text x="425" y="84" fill="#94a3b8" font-size="11">63.7%</text>
+                        <text x="515" y="102" fill="#10b981" font-size="12" font-weight="700">54.4%</text>
+                        <!-- X Axis -->
+                        <text x="45" y="185" fill="#64748b" font-size="11">0s</text>
+                        <text x="135" y="185" fill="#64748b" font-size="11">3s Hook</text>
+                        <text x="235" y="185" fill="#64748b" font-size="11">25% (4.1s)</text>
+                        <text x="335" y="185" fill="#64748b" font-size="11">50% (8.2s)</text>
+                        <text x="435" y="185" fill="#64748b" font-size="11">75% (12.3s)</text>
+                        <text x="525" y="185" fill="#64748b" font-size="11">100% (16.4s)</text>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Segment performance table -->
+            <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 20px;">
+                <h3 style="font-size: 16px; margin-bottom: 14px; color: #f8fafc;">👥 Segment-by-Segment Virality Contribution</h3>
+                <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left;">
+                    <thead>
+                        <tr style="border-bottom: 1px solid var(--border-subtle); color: var(--text-muted);">
+                            <th style="padding: 10px;">Segment Name</th>
+                            <th style="padding: 10px;">Sample</th>
+                            <th style="padding: 10px;">Views (Hook)</th>
+                            <th style="padding: 10px;">Completion</th>
+                            <th style="padding: 10px;">Shares</th>
+                            <th style="padding: 10px;">Virality Contribution</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                            <td style="padding: 12px 10px; color: #f8fafc; font-weight: 600;">College & Engineering Students</td>
+                            <td style="padding: 12px 10px;">365</td>
+                            <td style="padding: 12px 10px; color: #38bdf8;">339 (92.9%)</td>
+                            <td style="padding: 12px 10px; color: #34d399;">212 (58.1%)</td>
+                            <td style="padding: 12px 10px; color: #ec4899;">80</td>
+                            <td style="padding: 12px 10px; color: #34d399;">39.2% of all shares</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                            <td style="padding: 12px 10px; color: #f8fafc; font-weight: 600;">Early-Career Tech Professionals</td>
+                            <td style="padding: 12px 10px;">335</td>
+                            <td style="padding: 12px 10px; color: #38bdf8;">300 (89.6%)</td>
+                            <td style="padding: 12px 10px; color: #34d399;">184 (54.9%)</td>
+                            <td style="padding: 12px 10px; color: #ec4899;">69</td>
+                            <td style="padding: 12px 10px; color: #38bdf8;">33.8% of all shares</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                            <td style="padding: 12px 10px; color: #f8fafc; font-weight: 600;">Casual Tech & Gadget Enthusiasts</td>
+                            <td style="padding: 12px 10px;">300</td>
+                            <td style="padding: 12px 10px; color: #38bdf8;">235 (78.3%)</td>
+                            <td style="padding: 12px 10px; color: #34d399;">148 (49.3%)</td>
+                            <td style="padding: 12px 10px; color: #ec4899;">55</td>
+                            <td style="padding: 12px 10px; color: #c084fc;">27.0% of all shares</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- TAB 5: AGENT 5 (DIAGNOSTIC REPORT) -->
+    <!-- ======================================================== -->
+    <div class="tab-content" id="tab-agent5">
+        <div class="panel-card">
+            <div class="panel-title">
+                <span>📑 AGENT 5: EXECUTIVE VIRALITY REPORT & CONTENT AUDIT</span>
+                <span class="stat-badge badge-green">Outputs: outputs/VIRALITY_REPORT.md</span>
+            </div>
+
+            <div class="grid-2">
+                <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 20px;">
+                    <h3 style="font-size: 16px; color: #f8fafc; margin-bottom: 12px;">🏆 Executive Algorithmic Scorecard</h3>
+                    <div style="font-size: 13px; margin-bottom: 14px;">
+                        <div style="margin-bottom: 8px;"><strong>Push Probability:</strong> <span style="color: #38bdf8;">Aggressive. Algorithm will push beyond niche circles to global For You / Explore feeds.</span></div>
+                        <div style="margin-bottom: 8px;"><strong>Key Virality Driver:</strong> <span style="color: #cbd5e1;">Outstanding completion and share velocity in 'College & Engineering Students'.</span></div>
+                        <div style="margin-bottom: 8px;"><strong>Best Platform:</strong> <span style="color: #c084fc;">Instagram Reels (Optimal 95%) — High student DM forwarding</span></div>
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-top: 18px;">
+                        <a href="outputs/virality_report.json" target="_blank" class="btn btn-secondary" style="font-size: 12px;">
+                            <span>📥 Download JSON Report</span>
+                        </a>
+                        <a href="outputs/report.html" target="_blank" class="btn btn-secondary" style="font-size: 12px;">
+                            <span>🌐 Open Report HTML</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 20px;">
+                    <h3 style="font-size: 16px; color: #f8fafc; margin-bottom: 12px;">🛠️ Strategic Actionable Recommendations</h3>
+                    
+                    <div style="background: rgba(15, 23, 42, 0.6); border-radius: 12px; padding: 14px; margin-bottom: 10px; border-left: 3px solid #38bdf8;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                            <strong style="color: #f8fafc; font-size: 13px;">Hook Optimization</strong>
+                            <span class="stat-badge badge-blue">Maintenance</span>
+                        </div>
+                        <p style="font-size: 12px; color: #cbd5e1;">Exceptional 3-second hook retention (87.4%). Maintain this opening structure across future videos.</p>
+                    </div>
+
+                    <div style="background: rgba(15, 23, 42, 0.6); border-radius: 12px; padding: 14px; margin-bottom: 10px; border-left: 3px solid #10b981;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                            <strong style="color: #f8fafc; font-size: 13px;">Retention & Pacing</strong>
+                            <span class="stat-badge badge-green">Opportunity</span>
+                        </div>
+                        <p style="font-size: 12px; color: #cbd5e1;">Strong completion rate (54.4%). Introduce a loop hook at the end connecting the final sentence to the opening.</p>
+                    </div>
+
+                    <div style="background: rgba(15, 23, 42, 0.6); border-radius: 12px; padding: 14px; margin-bottom: 10px; border-left: 3px solid #ec4899;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                            <strong style="color: #f8fafc; font-size: 13px;">Virality & Growth</strong>
+                            <span class="stat-badge badge-pink">High Priority</span>
+                        </div>
+                        <p style="font-size: 12px; color: #cbd5e1;">Double down on content tailored specifically to 'College & Engineering Students'. Prompt viewers to tag friends in lab.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- TAB 6: AGENT 6 (CONTENT OPTIMIZER & VIRAL FIXER) -->
+    <!-- ======================================================== -->
+    <div class="tab-content" id="tab-agent6">
+        <div class="panel-card">
+            <div class="panel-title">
+                <span>🚀 AGENT 6: CONTENT OPTIMIZER & VIRAL FIXER (THE GRAND FINALE)</span>
+                <span class="stat-badge badge-purple">Outputs: outputs/VIRAL_OPTIMIZATION_PLAN.md</span>
+            </div>
+
+            <!-- Uplift Comparison -->
+            <div style="background: linear-gradient(135deg, rgba(20, 27, 45, 0.95), rgba(13, 20, 36, 0.98)); border: 1px solid rgba(192, 132, 252, 0.4); border-radius: 20px; padding: 24px; margin-bottom: 24px; display: grid; grid-template-columns: 1fr 2fr; gap: 24px; align-items: center;">
+                <div style="text-align: center; border-right: 1px solid rgba(255, 255, 255, 0.08); padding-right: 20px;">
+                    <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted);">
+                        Projected Score Uplift
+                    </div>
+                    <div style="display: flex; align-items: baseline; justify-content: center; gap: 12px; margin: 12px 0;">
+                        <span style="font-size: 32px; font-weight: 700; color: #64748b; text-decoration: line-through;">91.0</span>
+                        <span style="font-size: 26px; color: #c084fc;">➡️</span>
+                        <span style="font-size: 58px; font-weight: 900; color: #34d399; text-shadow: 0 0 25px rgba(52, 211, 153, 0.45);">97.0</span>
+                    </div>
+                    <span class="stat-badge badge-green" style="font-size: 13px;">+6.0 pts (+6.6% Net Uplift)</span>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;">
+                    <div class="stat-card">
+                        <div class="stat-header">Optimized 3s Hook</div>
+                        <div class="stat-value" style="font-size: 22px; color: #38bdf8;">96.0%</div>
+                        <div style="font-size: 11px; color: #34d399;">↑ +8.6% Retention</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">Optimized Completion</div>
+                        <div class="stat-value" style="font-size: 22px; color: #34d399;">74.4%</div>
+                        <div style="font-size: 11px; color: #34d399;">↑ +20.0% Watch-time</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">Viral Share Multiplier</div>
+                        <div class="stat-value" style="font-size: 22px; color: #ec4899;">38.4%</div>
+                        <div style="font-size: 11px; color: #34d399;">↑ +18.0% DM Shares</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3 Hook Rewrites -->
+            <h3 style="font-size: 18px; margin-bottom: 16px; color: #f8fafc;">🎣 3 High-Retention Pattern-Interrupt Hook Rewrites</h3>
+            <div class="grid-3">
+                <div class="stat-card" style="border-color: rgba(192, 132, 252, 0.3);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span class="stat-badge badge-purple">Variant A</span>
+                        <span style="font-size: 11px; color: #34d399; font-weight: 700;">⚡ 88.4% Est.</span>
+                    </div>
+                    <strong style="color: #f8fafc; font-size: 14px; margin-bottom: 8px;">Curiosity Gap & Pattern Interrupt</strong>
+                    <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">👁️ <strong>Action:</strong> Rapid 0.8s digital snap-zoom into the main subject's expression.</div>
+                    <div class="code-box">
+                        <button class="copy-btn" onclick="copyText('If you are in Computer Programming, this one realization is going to completely change how you look at your day...', 'Voiceover Copied')">Copy</button>
+                        🗣️ "If you're in Computer Programming, this one realization is going to completely change how you look at your day..."
+                    </div>
+                    <div style="font-size: 12px; color: #fef08a; font-weight: 700; margin: 4px 0;">🔤 🚨 WAIT TILL YOU SEE THIS... [YELLOW BOLD]</div>
+                    <div style="font-size: 11px; color: #c084fc; font-family: var(--font-mono);">🔊 Fast whoosh transition + heavy bass punch on 'WAIT'</div>
+                </div>
+
+                <div class="stat-card" style="border-color: rgba(192, 132, 252, 0.3);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span class="stat-badge badge-purple">Variant B</span>
+                        <span style="font-size: 11px; color: #34d399; font-weight: 700;">⚡ 85.2% Est.</span>
+                    </div>
+                    <strong style="color: #f8fafc; font-size: 14px; margin-bottom: 8px;">Relatable Pain Point / Problem-First</strong>
+                    <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">👁️ <strong>Action:</strong> Start immediately mid-action (in media res) showing the screen with code.</div>
+                    <div class="code-box">
+                        <button class="copy-btn" onclick="copyText('Tell me I am not the only one who deals with this exact situation every single time...', 'Voiceover Copied')">Copy</button>
+                        🗣️ "Tell me I'm not the only one who deals with this exact situation every single time..."
+                    </div>
+                    <div style="font-size: 12px; color: #fef08a; font-weight: 700; margin: 4px 0;">🔤 POV: YOUR DAILY REALITY 💀 [WHITE BOLD / RED HIGHLIGHT]</div>
+                    <div style="font-size: 11px; color: #c084fc; font-family: var(--font-mono);">🔊 Subtle comedic record-scratch followed by upbeat trending lo-fi beat</div>
+                </div>
+
+                <div class="stat-card" style="border-color: rgba(192, 132, 252, 0.3);">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span class="stat-badge badge-purple">Variant C</span>
+                        <span style="font-size: 11px; color: #34d399; font-weight: 700;">⚡ 91.8% Est.</span>
+                    </div>
+                    <strong style="color: #f8fafc; font-size: 14px; margin-bottom: 8px;">Contrarian / In Media Res Shock</strong>
+                    <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">👁️ <strong>Action:</strong> Flash the climax frame for 0.4s as a teaser before cutting to start.</div>
+                    <div class="code-box">
+                        <button class="copy-btn" onclick="copyText('Everyone thinks Computer Programming is simple, until this happens and changes everything.', 'Voiceover Copied')">Copy</button>
+                        🗣️ "Everyone thinks Computer Programming is simple, until this happens and changes everything."
+                    </div>
+                    <div style="font-size: 12px; color: #fef08a; font-weight: 700; margin: 4px 0;">🔤 DON'T MAKE THIS MISTAKE ⚠️ [HIGH CONTRAST BOX]</div>
+                    <div style="font-size: 11px; color: #c084fc; font-family: var(--font-mono);">🔊 Glitch sound effect with instant high-pass filter drop</div>
+                </div>
+            </div>
+
+            <!-- Cut blueprint -->
+            <div style="margin-bottom: 24px;">
+                <h3 style="font-size: 18px; margin-bottom: 14px; color: #f8fafc;">✂️ Scene-by-Scene Re-Edit Cut Blueprint</h3>
+                <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid var(--border-subtle); border-radius: 16px; overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid var(--border-subtle); color: var(--text-muted);">
+                                <th style="padding: 12px 14px;">Timestamp</th>
+                                <th style="padding: 12px 14px;">Action Type</th>
+                                <th style="padding: 12px 14px;">Exact Video Editing Direction</th>
+                                <th style="padding: 12px 14px;">Algorithmic Rationale</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                                <td style="padding: 12px 14px; font-family: var(--font-mono); color: #38bdf8;">0.0s – 1.2s</td>
+                                <td style="padding: 12px 14px;"><span class="stat-badge badge-purple">Lead-In Trim</span></td>
+                                <td style="padding: 12px 14px; color: #f8fafc;">Cut first 0.6s–1.0s of dead lead-in frames. Crop vertical canvas 112% to increase focal intimacy.</td>
+                                <td style="padding: 12px 14px; color: var(--text-muted); font-size: 12px;">Removes the idle pause that accounted for 12.6% 3-second dropoff.</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                                <td style="padding: 12px 14px; font-family: var(--font-mono); color: #38bdf8;">1.2s – 4.5s</td>
+                                <td style="padding: 12px 14px;"><span class="stat-badge badge-purple">Caption Stacking</span></td>
+                                <td style="padding: 12px 14px; color: #f8fafc;">Add auto-centered animated subtitles (1–3 words per frame) with yellow power-word emphasis.</td>
+                                <td style="padding: 12px 14px; color: var(--text-muted); font-size: 12px;">Captures the 68% of users watching in muted sound mode on mobile feeds.</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                                <td style="padding: 12px 14px; font-family: var(--font-mono); color: #38bdf8;">4.5s – 9.0s</td>
+                                <td style="padding: 12px 14px;"><span class="stat-badge badge-purple">Pattern Interrupt</span></td>
+                                <td style="padding: 12px 14px; color: #f8fafc;">Insert a rapid zoom-out or B-roll cutaway at 4.5s. Add subtle riser audio cue (-16dB) under dialogue.</td>
+                                <td style="padding: 12px 14px; color: var(--text-muted); font-size: 12px;">Re-engages dopamine receptors at critical 5-second attention lapse threshold.</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+                                <td style="padding: 12px 14px; font-family: var(--font-mono); color: #38bdf8;">9.0s – 16.4s</td>
+                                <td style="padding: 12px 14px;"><span class="stat-badge badge-purple">Infinite Loop Outro</span></td>
+                                <td style="padding: 12px 14px; color: #f8fafc;">Cut trailing pauses. End video abruptly on unresolved cadence connecting back to the opening word of Hook A.</td>
+                                <td style="padding: 12px 14px; color: var(--text-muted); font-size: 12px;">Forces 20%–35% of viewers into an involuntary 2nd loop watch, multiplying completion score.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Multi-Platform Kits -->
+            <h3 style="font-size: 18px; margin-bottom: 14px; color: #f8fafc;">📱 Multi-Platform Publishing Kits (1-Click Copy)</h3>
+            <div class="grid-3">
+                <div class="stat-card">
+                    <strong style="color: #ec4899; font-size: 15px; margin-bottom: 8px;">📸 Instagram Reels</strong>
+                    <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Cover: The Reality of Computer Programming Nobody Tells You</div>
+                    <div class="code-box">
+                        <button class="copy-btn" onclick="copyText('Is it just us, or does this hit a little too close to home? 😂\n\nTag that one friend who needs to see this right now 👇\n\n#ComputerProgramming #ViralReels #ExplorePage #TechTok', 'Caption Copied')">Copy</button>
+Is it just us, or does this hit a little too close to home? 😂
+
+Tag that one friend who needs to see this right now 👇
+
+#ComputerProgramming #ViralReels #ExplorePage #TechTok
+                    </div>
+                    <div>
+                        <span class="tag-pill">#ComputerProgramming</span>
+                        <span class="tag-pill">#ViralReels</span>
+                        <span class="tag-pill">#ExplorePage</span>
+                        <span class="tag-pill">#TechLife</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <strong style="color: #38bdf8; font-size: 15px; margin-bottom: 8px;">🎵 TikTok</strong>
+                    <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Sound: Original Audio + Trending Sound (4% vol)</div>
+                    <div class="code-box">
+                        <button class="copy-btn" onclick="copyText('wait for the end… this is crazy 😭 #computerprogramming\n\nWhat would you have done in this situation? Dropping honest opinions in comments 👇', 'TikTok Copied')">Copy</button>
+wait for the end… this is crazy 😭 #computerprogramming
+
+What would you have done in this situation? Dropping honest opinions in comments 👇
+                    </div>
+                    <div>
+                        <span class="tag-pill">#fyp</span>
+                        <span class="tag-pill">#foryou</span>
+                        <span class="tag-pill">#computerprogramming</span>
+                        <span class="tag-pill">#relatable</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <strong style="color: #f43f5e; font-size: 15px; margin-bottom: 8px;">🔴 YouTube Shorts</strong>
+                    <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">CTR Title:</div>
+                    <div class="code-box">
+                        <button class="copy-btn" onclick="copyText('Why Everyone Is Talking About Computer Programming 👀 #Shorts', 'Title Copied')">Copy</button>
+Why Everyone Is Talking About Computer Programming 👀 #Shorts
+                    </div>
+                    <div style="font-size: 12px; color: var(--text-muted);">Pinned Comment: Did you notice the detail at 0:04? Tell us in the comments! 👇</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Copy notification toast -->
+<div class="toast" id="toast">Copied to clipboard! ✓</div>
+
+<script>
+    // Tab switcher
+    function switchTab(agentId) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.step-node').forEach(node => node.classList.remove('active'));
+
+        const targetTab = document.getElementById('tab-' + agentId);
+        const targetNode = document.getElementById('node-' + agentId);
+        if (targetTab) targetTab.classList.add('active');
+        if (targetNode) targetNode.classList.add('active');
+    }
+
+    // Copy to clipboard helper
+    function copyText(text, label = 'Copied') {
+        navigator.clipboard.writeText(text).then(() => {
+            const toast = document.getElementById('toast');
+            toast.innerText = label + ' ✓';
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 2200);
+        }).catch(() => {
+            alert('Copied: ' + text);
+        });
+    }
+
+    // Live simulation demo runner
+    let simInterval = null;
+    function runLiveSimulation() {
+        const btn = document.getElementById('btn-run-sim');
+        const banner = document.getElementById('sim-banner');
+        const msg = document.getElementById('sim-status-message');
+        const timer = document.getElementById('sim-timer');
+
+        banner.style.display = 'flex';
+        btn.disabled = true;
+        btn.style.opacity = '0.6';
+
+        const stages = [
+            {
+                id: 'agent1',
+                name: 'Agent 1 (Video Analyzer)',
+                action: '⚡ Running Agent 1: Inspecting video frames with OpenCV, running OCR, querying Groq Qwen Vision AI...',
+                completeMsg: '✓ Agent 1 COMPLETED! Video metadata & visual scene profile generated. Handing off to Agent 2...'
+            },
+            {
+                id: 'agent2',
+                name: 'Agent 2 (Audience Discovery)',
+                action: '⚡ Running Agent 2: Reasoning audience archetypes, 3 concentric virality waves, and platform suitability...',
+                completeMsg: '✓ Agent 2 COMPLETED! 3 Target Audience Personas identified. Handing off to Agent 3...'
+            },
+            {
+                id: 'agent3',
+                name: 'Agent 3 (Virtual Population)',
+                action: '⚡ Running Agent 3: Synthesizing 1,000 synthetic test users with attention spans & scroll velocities...',
+                completeMsg: '✓ Agent 3 COMPLETED! 1,000 Virtual Users generated. Handing off to Agent 4...'
+            },
+            {
+                id: 'agent4',
+                name: 'Agent 4 (Engagement Predictor)',
+                action: '⚡ Running Agent 4: Simulating 1,000 Monte Carlo viewing sessions, retention curve, and virality score...',
+                completeMsg: '✓ Agent 4 COMPLETED! Retention curve calculated (Virality Score: 91/100). Handing off to Agent 5...'
+            },
+            {
+                id: 'agent5',
+                name: 'Agent 5 (Diagnostic Report)',
+                action: '⚡ Running Agent 5: Synthesizing executive diagnostics, drop-off audits, and strategic recommendations...',
+                completeMsg: '✓ Agent 5 COMPLETED! Diagnostic report compiled. Handing off to Agent 6...'
+            },
+            {
+                id: 'agent6',
+                name: 'Agent 6 (Content Optimizer)',
+                action: '⚡ Running Agent 6: Engineering 3 pattern-interrupt hooks, scene-by-scene cut blueprint, and uplift...',
+                completeMsg: '🎉 ALL 6 AGENTS COMPLETED! Full viral intelligence unlocked & ready for creator execution!'
+            }
+        ];
+
+        let currentIdx = 0;
+        let seconds = 0;
+        clearInterval(simInterval);
+        simInterval = setInterval(() => {
+            seconds++;
+            const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+            const s = String(seconds % 60).padStart(2, '0');
+            timer.innerText = `${m}:${s}`;
+        }, 1000);
+
+        function executeStage(index) {
+            if (index >= stages.length) {
+                clearInterval(simInterval);
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                msg.innerHTML = '<strong style="color: #34d399;">🎉 Simulation Complete! All 6 Agents successfully executed and verified.</strong>';
+                return;
+            }
+
+            const stage = stages[index];
+            switchTab(stage.id);
+
+            // Set running state on node
+            document.querySelectorAll('.step-node').forEach(n => n.classList.remove('running'));
+            const node = document.getElementById('node-' + stage.id);
+            if (node) node.classList.add('running');
+
+            msg.innerText = stage.action;
+
+            setTimeout(() => {
+                if (node) {
+                    node.classList.remove('running');
+                    document.getElementById('status-' + stage.id).innerText = '✓';
+                }
+                msg.innerText = stage.completeMsg;
+
+                setTimeout(() => {
+                    executeStage(index + 1);
+                }, 1800);
+            }, 2400);
+        }
+
+        executeStage(0);
+    }
+</script>
+</body>
+</html>

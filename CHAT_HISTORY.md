@@ -20,6 +20,7 @@ This document contains the complete record of the conversation, technical invest
    - [What `name`, `age_range`, and `relevance_score` Mean](#what-name-age_range-and-relevance_score-mean)
    - [Why Only 3 Audience Segments? (The 3-Wave Virality Rule)](#why-only-3-audience-segments-the-3-wave-virality-rule)
 10. [Factor-by-Factor Mapping: Agent 1 ➡️ Agent 2](#10-factor-by-factor-mapping-agent-1-️-agent-2)
+11. [Agent 6: Content Optimizer & Viral Fixer (Final Output of the Pipeline)](#11-agent-6-content-optimizer--viral-fixer-final-output-of-the-pipeline)
 
 ---
 
@@ -241,4 +242,33 @@ In social media growth engineering, virality spreads in **3 concentric waves**:
 
 ---
 
-*End of Chat & Session Summary. All code and configuration files are live and working inside `d:\AI-VIRALITY-SIMULATION\AI-Virality-Simulator`.*
+## 11. Agent 6: Content Optimizer & Viral Fixer (Final Output of the Pipeline)
+
+### Purpose:
+The definitive prescriptive finale of the project. While Agents 1–5 diagnose retention weaknesses and forecast virality scores, **Agent 6 actively fixes them** to drive content to viral scale.
+
+### Key Capabilities & Artifacts Generated:
+1. **3 High-Retention Hook Rewrites (Pattern Disruptors)**:
+   - **Variant A**: Curiosity Gap & Pattern Interrupt (Dopamine Incongruity, 88%+ Retention).
+   - **Variant B**: Relatable Pain Point / Problem-First (Tribal Empathy & FOMO, 85%+ Retention).
+   - **Variant C**: Contrarian / In Media Res Shock (Cognitive Dissonance, 91%+ Retention).
+   - *Includes visual cues, exact spoken dialogue lines, kinetic typography styling, and SFX cues.*
+2. **Scene-by-Scene Re-Edit Cut Blueprint**:
+   - Exact timestamped editing actions (lead-in dead air trim, subtitle styling, pattern interrupt placement at 4.5s, infinite loop outro).
+3. **Multi-Platform Publishing Kits**:
+   - **Instagram Reels**: Cover headline, DM-trigger caption, and 15 targeted hashtags.
+   - **TikTok**: First-line hook, comment-bait question, search SEO keywords, sound piggyback strategy.
+   - **YouTube Shorts**: High-CTR title (< 50 chars), pinned comment, search tags.
+4. **Projected Virality Uplift & ROI Forecast**:
+   - Algorithmic virality score uplift calculation (e.g., 58.0 ➡️ 81.6 / 100, +40.7% boost).
+   - 3s hook retention uplift (+22.5%) and completion rate uplift (+20.0%).
+   - Algorithmic distribution expansion tier (Tier 2/1 FYP Explore reach).
+5. **Output Files**:
+   - `outputs/viral_optimization_plan.json` (Structured JSON)
+   - `outputs/VIRAL_OPTIMIZATION_PLAN.md` (Executive Creator Playbook)
+   - `outputs/optimization_dashboard.html` (Interactive dark glassmorphism web dashboard)
+
+---
+
+*End of Chat & Session Summary. All 6 Agents are live and validated inside the AI Virality Simulator.*
+
